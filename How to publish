@@ -1,0 +1,27 @@
+Command
+
+*** Add gh-page ***
+npm install gh-pages --save-dev  
+
+*** Change package.json
+      *** Add home page
+      "homepage": "http://r4df.github.io/reactjs-proj",
+      
+      
+      *** Add Script
+       "scripts": {
+          "start": "react-scripts start",
+          "predeploy": "npm run build",     <----- ADD SCRIPT
+          "deploy": "gh-pages -d build",     <----- ADD SCRIPT
+          "build": "react-scripts build",
+          "test": "react-scripts test",
+          "eject": "react-scripts eject"
+        }
+
+*** Commit Changes
+git add .
+git commit -m "Deploy website" 
+git push                                            
+
+*** Publish ***
+npm run deploy  
