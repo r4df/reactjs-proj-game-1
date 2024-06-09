@@ -14,9 +14,10 @@ class clInterface extends Component {
         panels: Array(9).fill(GLSYMBOL_DEF),
         turn: GLSYMBOL_X,
         turnCnt: 0,
+        resetButton: true
       },
       scoreBoard: {
-        winner: "-",
+        winner: GLSYMBOL_DEF,
         xScore: 0,
         oScore: 0,
       },
@@ -35,6 +36,8 @@ class clInterface extends Component {
       this.updatePanelVal.bind(this, 9),
     ];
 
+    this.handleClickResetGame = this.resetGame.bind(this)
+
     this.vSymbol = [GLSYMBOL_X, GLSYMBOL_O];
     this.vPattern = [
       [0, 1, 2],
@@ -48,6 +51,29 @@ class clInterface extends Component {
     ];
   }
 
+  resetGame(){
+    return new Promise((resolve, reject)=>{
+      let vStateNew = JSON.parse(JSON.stringify(this.state));
+
+      vStateNew.tictacBoard.panels = Array(9).fill(GLSYMBOL_DEF)
+      vStateNew.tictacBoard.turn = GLSYMBOL_X
+      vStateNew.tictacBoard.turnCnt = 0
+      vStateNew.scoreBoard.winner = GLSYMBOL_DEF
+
+      this.setState(
+        {
+          tictacBoard: vStateNew.tictacBoard,
+          scoreBoard: vStateNew.scoreBoard,
+        },
+        () => {
+          console.log(this.state);
+        }
+      );
+
+      resolve()
+    })
+  }
+
   placeMove(aPanelNum) {
     return new Promise(async (resolve, reject) => {
       //Get current values
@@ -58,30 +84,37 @@ class clInterface extends Component {
       let vStateNew = JSON.parse(JSON.stringify(this.state));
 
       //Display Value
-      if (vTurnCnt < 9 && vWinner === GLSYMBOL_DEF) {
-        if (vPanel[aPanelNum] === GLSYMBOL_DEF) {
-          switch (vTurn) {
-            case GLSYMBOL_X:
-              vStateNew.tictacBoard.panels[aPanelNum] = GLSYMBOL_X;
-              break;
-            case GLSYMBOL_O:
-              vStateNew.tictacBoard.panels[aPanelNum] = GLSYMBOL_O;
-              break;
-            default:
-              break;
-          }
+      if (vWinner === GLSYMBOL_DEF) {
+        //Is there a winner?
+        if (vTurnCnt < 9) {
+          if (vPanel[aPanelNum] === GLSYMBOL_DEF) {
+            switch (vTurn) {
+              case GLSYMBOL_X:
+                vStateNew.tictacBoard.panels[aPanelNum] = GLSYMBOL_X;
+                break;
+              case GLSYMBOL_O:
+                vStateNew.tictacBoard.panels[aPanelNum] = GLSYMBOL_O;
+                break;
+              default:
+                break;
+            }
 
-          vStateNew.scoreBoard = await this.checkWinner(vStateNew);
-          vStateNew.tictacBoard = await this.changeTurn(vStateNew);
-          resolve(vStateNew);
+            vStateNew.scoreBoard = await this.checkWinner(vStateNew);
+            vStateNew.tictacBoard = await this.changeTurn(vStateNew);
+            resolve(vStateNew);
+          } else {
+            alert("Already accupied!");
+          }
         } else {
-          alert("Already accupied!");
-          resolve(vStateNew);
+          alert("Draw!");
+          vStateNew.tictacBoard.resetButton = false
         }
       } else {
-        alert("Draw!");
-        resolve(vStateNew);
+        alert(`${vWinner} won!`);
+        vStateNew.tictacBoard.resetButton = false
       }
+
+      resolve(vStateNew);
     });
   }
 
@@ -101,9 +134,19 @@ class clInterface extends Component {
         let vCheckResult = vTargetPanelVal.every((val) => val === vTurn);
 
         if (vCheckResult === true) {
+          //Declare Winner
           vStateNew.scoreBoard.winner = vTurn;
+
+          //Increment Score
+          if (vTurn === GLSYMBOL_X) {
+            vStateNew.scoreBoard.xScore = vStateNew.scoreBoard.xScore + 1;
+          } else {
+            vStateNew.scoreBoard.oScore = vStateNew.scoreBoard.oScore + 1;
+          }
+          
           break;
         } else {
+          //No Winner
           vStateNew.scoreBoard.winner = GLSYMBOL_DEF;
         }
       }
@@ -151,7 +194,7 @@ class clInterface extends Component {
         <table id="tbl-tictac">
           <thead>
             <tr>
-              <th colSpan={3}>TIC TAC</th>
+              <th colSpan={3}>TIC TAC TOE</th>
             </tr>
           </thead>
           <tbody>
@@ -186,6 +229,13 @@ class clInterface extends Component {
               </td>
               <td onClick={this.handleClick[8]}>
                 {this.state.tictacBoard.panels[8]}
+              </td>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr>
+              <td colSpan={3}>
+                <input type="button" value={"Reset"} onClick={this.handleClickResetGame} disabled={this.state.tictacBoard.resetButton}></input>
               </td>
             </tr>
           </tbody>
