@@ -5,6 +5,7 @@ const GLSYMBOL_DEF = "-";
 const GLSYMBOL_X = "X";
 const GLSYMBOL_O = "O";
 
+//Operation
 class clInterface extends Component {
   constructor(props) {
     super(props);
