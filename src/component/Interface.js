@@ -12,6 +12,7 @@ class clInterface extends Component {
       tictacBoard: {
         panels: Array(9).fill(GLSYMBOL_DEF),
         turn: GLSYMBOL_X,
+        turnCnt: 0,
       },
       scoreBoard: {
         winner: "-",
@@ -47,37 +48,47 @@ class clInterface extends Component {
   }
 
   placeMove(aPanelNum) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       //Get current values
       let vPanel = this.state.tictacBoard.panels;
       let vTurn = this.state.tictacBoard.turn;
-      let vPanelNew = vPanel
+      let vTurnCnt = this.state.tictacBoard.turnCnt;
+      let vWinner = this.state.scoreBoard.winner;
+      let vStateNew = JSON.parse(JSON.stringify(this.state));
 
       //Display Value
-      if (vPanel[aPanelNum] === GLSYMBOL_DEF) {
-        switch (vTurn) {
-          case GLSYMBOL_X:
-            vPanelNew[aPanelNum] = GLSYMBOL_X;
-            break;
-          case GLSYMBOL_O:
-            vPanelNew[aPanelNum] = GLSYMBOL_O;
-            break;
-          default:
-            break;
+      if (vTurnCnt < 9 && vWinner === GLSYMBOL_DEF) {
+        if (vPanel[aPanelNum] === GLSYMBOL_DEF) {
+          switch (vTurn) {
+            case GLSYMBOL_X:
+              vStateNew.tictacBoard.panels[aPanelNum] = GLSYMBOL_X;
+              break;
+            case GLSYMBOL_O:
+              vStateNew.tictacBoard.panels[aPanelNum] = GLSYMBOL_O;
+              break;
+            default:
+              break;
+          }
+
+          vStateNew.scoreBoard = await this.checkWinner(vStateNew);
+          vStateNew.tictacBoard = await this.changeTurn(vStateNew);
+          resolve(vStateNew);
+        } else {
+          alert("Already accupied!");
+          resolve(vStateNew);
         }
       } else {
-        alert("Already accupied!");
+        alert("Draw!");
+        resolve(vStateNew);
       }
-
-      resolve(vPanelNew);
     });
   }
 
-  checkWinner() {
+  checkWinner(aStateNew) {
     return new Promise((resolve, reject) => {
-      let vPanels = this.state.tictacBoard.panels;
-      let vTurn = this.state.tictacBoard.turn;
-      let vScoreBoard = JSON.parse(JSON.stringify(this.state.scoreBoard));
+      let vStateNew = JSON.parse(JSON.stringify(aStateNew));
+      let vPanels = vStateNew.tictacBoard.panels;
+      let vTurn = vStateNew.tictacBoard.turn;
 
       for (let vEachPattern of this.vPattern) {
         let vTargetPanelVal = [
@@ -89,49 +100,43 @@ class clInterface extends Component {
         let vCheckResult = vTargetPanelVal.every((val) => val === vTurn);
 
         if (vCheckResult === true) {
-          vScoreBoard.winner = `Winner is ${vTurn}`;
+          vStateNew.scoreBoard.winner = vTurn;
           break;
         } else {
-          vScoreBoard.winner = "~";
+          vStateNew.scoreBoard.winner = GLSYMBOL_DEF;
         }
       }
-
-      resolve(vScoreBoard);
+      resolve(vStateNew.scoreBoard);
     });
   }
 
-  changeTurn() {
+  changeTurn(aStateNew) {
     return new Promise((resolve, reject) => {
-      let vTurn = this.state.tictacBoard.turn;
-      let vTurnNew = null;
-
+      let vTurn = aStateNew.tictacBoard.turn;
       switch (vTurn) {
         case GLSYMBOL_X:
-          vTurnNew = GLSYMBOL_O;
+          aStateNew.tictacBoard.turn = GLSYMBOL_O;
           break;
         case GLSYMBOL_O:
-          vTurnNew = GLSYMBOL_X;
+          aStateNew.tictacBoard.turn = GLSYMBOL_X;
           break;
         default:
+          aStateNew.tictacBoard.turn = GLSYMBOL_DEF;
           break;
       }
 
-      resolve(vTurnNew);
+      aStateNew.tictacBoard.turnCnt = aStateNew.tictacBoard.turnCnt + 1;
+      resolve(aStateNew.tictacBoard);
     });
   }
 
   async updatePanelVal(aPanelNum) {
-
-    let vPanel = {
-      panels: await this.placeMove(aPanelNum),
-      turn: await this.changeTurn(),
-    };
-    let vScoreBoard = await this.checkWinner();
+    let vStateNew = await this.placeMove(aPanelNum);
 
     this.setState(
       {
-        tictacBoard: vPanel,
-        scoreBoard: vScoreBoard,
+        tictacBoard: vStateNew.tictacBoard,
+        scoreBoard: vStateNew.scoreBoard,
       },
       () => {
         console.log(this.state);
@@ -142,7 +147,7 @@ class clInterface extends Component {
   render() {
     return (
       <div id="tictactoe">
-        <table id='tbl-tictac'>
+        <table id="tbl-tictac">
           <thead>
             <tr>
               <th colSpan={3}>TIC TAC</th>
@@ -185,13 +190,13 @@ class clInterface extends Component {
           </tbody>
         </table>
 
-        <table id='tbl-scoreboard'> 
+        <table id="tbl-scoreboard">
           <thead>
             <tr>
               <th colSpan={2}>Score Board</th>
             </tr>
             <tr>
-              <td colSpan={2}>{this.state.scoreBoard.winner}</td>
+              <td colSpan={2}>Winner : {this.state.scoreBoard.winner}</td>
             </tr>
           </thead>
           <tbody>

@@ -45,11 +45,17 @@
   align-items: flex-start;
 }
 
+
+
 #tbl-tictac,
 #tbl-scoreboard {
   margin: 5px;
   border: 1px solid midnightblue;
   border-collapse: collapse;
+}
+
+#tbl-tictac > thead{
+  background: aqua;
 }
 
 #tbl-tictac td,
