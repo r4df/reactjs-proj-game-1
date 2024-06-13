@@ -38,6 +38,27 @@
 }
 
 /*User*/
+@font-face {
+  font-family: 'zx-spectrum';
+  src: URL('/src/font/zx_spectrum/zx-spectrum.ttf') format('truetype');
+}
+
+.panelBlink {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+*{
+  /* font-family: Copperplate, Arial, fantasy; */
+  font-family: 'zx-spectrum', sans-serif;
+  color: #07393c;
+}
+
 #tictactoe {
   display: flex;
   flex-direction: row;
@@ -45,24 +66,38 @@
   align-items: flex-start;
 }
 
-
+#tictactoe-mod-1{
+  display: flex;
+  border: 1px solid #0a090c;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 5px;
+  background-color: #F0EDEE;
+  box-shadow: 10px 5px 5px rgba(0, 0, 0, 0.469);
+}
 
 #tbl-tictac,
 #tbl-scoreboard {
   margin: 5px;
-  border: 1px solid midnightblue;
   border-collapse: collapse;
+  /* background: #cbe7ee; */
 }
 
-#tbl-tictac > thead{
-  background:blue;
+#tbl-tictac > thead,
+#tbl-scoreboard > thead{
+  background:#2c666e;
+
+}
+
+*th{
+  color: #f0edee !important;
 }
 
 #tbl-tictac td,
 #tbl-tictac th,
 #tbl-scoreboard td,
 #tbl-scoreboard th {
-  border: 1px solid midnightblue;
+  border: 1px solid #0a090c;
   padding: 5px;
   height: 25px;
   width: 25px;
