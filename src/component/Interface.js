@@ -14,7 +14,7 @@ class clInterface extends Component {
         panels: Array(9).fill(GLSYMBOL_DEF),
         turn: GLSYMBOL_X,
         turnCnt: 0,
-        resetButton: true
+        resetButton: true,
       },
       scoreBoard: {
         winner: GLSYMBOL_DEF,
@@ -22,6 +22,8 @@ class clInterface extends Component {
         oScore: 0,
       },
     };
+
+    this.newState = {};
 
     this.handleClick = [
       this.updatePanelVal.bind(this, 0),
@@ -36,7 +38,7 @@ class clInterface extends Component {
       this.updatePanelVal.bind(this, 9),
     ];
 
-    this.handleClickResetGame = this.resetGame.bind(this)
+    this.handleClickResetGame = this.resetGame.bind(this);
 
     this.vSymbol = [GLSYMBOL_X, GLSYMBOL_O];
     this.vPattern = [
@@ -51,14 +53,16 @@ class clInterface extends Component {
     ];
   }
 
-  resetGame(){
-    return new Promise((resolve, reject)=>{
+  resetGame() {
+    return new Promise((resolve, reject) => {
       let vStateNew = JSON.parse(JSON.stringify(this.state));
 
-      vStateNew.tictacBoard.panels = Array(9).fill(GLSYMBOL_DEF)
-      vStateNew.tictacBoard.turn = GLSYMBOL_X
-      vStateNew.tictacBoard.turnCnt = 0
-      vStateNew.scoreBoard.winner = GLSYMBOL_DEF
+      vStateNew.tictacBoard.panels = Array(9).fill(GLSYMBOL_DEF);
+      vStateNew.tictacBoard.turn = GLSYMBOL_X;
+      vStateNew.tictacBoard.turnCnt = 0;
+      vStateNew.tictacBoard.resetButton = true;
+
+      vStateNew.scoreBoard.winner = GLSYMBOL_DEF;
 
       this.setState(
         {
@@ -70,59 +74,31 @@ class clInterface extends Component {
         }
       );
 
-      resolve()
-    })
-  }
-
-  placeMove(aPanelNum) {
-    return new Promise(async (resolve, reject) => {
-      //Get current values
-      let vPanel = this.state.tictacBoard.panels;
-      let vTurn = this.state.tictacBoard.turn;
-      let vTurnCnt = this.state.tictacBoard.turnCnt;
-      let vWinner = this.state.scoreBoard.winner;
-      let vStateNew = JSON.parse(JSON.stringify(this.state));
-
-      //Display Value
-      if (vWinner === GLSYMBOL_DEF) {
-        //Is there a winner?
-        if (vTurnCnt < 9) {
-          if (vPanel[aPanelNum] === GLSYMBOL_DEF) {
-            switch (vTurn) {
-              case GLSYMBOL_X:
-                vStateNew.tictacBoard.panels[aPanelNum] = GLSYMBOL_X;
-                break;
-              case GLSYMBOL_O:
-                vStateNew.tictacBoard.panels[aPanelNum] = GLSYMBOL_O;
-                break;
-              default:
-                break;
-            }
-
-            vStateNew.scoreBoard = await this.checkWinner(vStateNew);
-            vStateNew.tictacBoard = await this.changeTurn(vStateNew);
-            resolve(vStateNew);
-          } else {
-            alert("Already accupied!");
-          }
-        } else {
-          alert("Draw!");
-          vStateNew.tictacBoard.resetButton = false
-        }
-      } else {
-        alert(`${vWinner} won!`);
-        vStateNew.tictacBoard.resetButton = false
-      }
-
-      resolve(vStateNew);
+      resolve();
     });
   }
 
-  checkWinner(aStateNew) {
+  placeMove(aPanelNum) {
     return new Promise((resolve, reject) => {
-      let vStateNew = JSON.parse(JSON.stringify(aStateNew));
-      let vPanels = vStateNew.tictacBoard.panels;
-      let vTurn = vStateNew.tictacBoard.turn;
+      let vTurn = this.state.tictacBoard.turn;
+      switch (vTurn) {
+        case GLSYMBOL_X:
+          this.newState.tictacBoard.panels[aPanelNum] = GLSYMBOL_X;
+          break;
+        case GLSYMBOL_O:
+          this.newState.tictacBoard.panels[aPanelNum] = GLSYMBOL_O;
+          break;
+        default:
+          break;
+      }
+      resolve(0);
+    });
+  }
+
+  checkWinner() {
+    return new Promise((resolve, reject) => {
+      let vPanels = this.newState.tictacBoard.panels;
+      let vTurn = this.newState.tictacBoard.turn;
 
       for (let vEachPattern of this.vPattern) {
         let vTargetPanelVal = [
@@ -135,52 +111,88 @@ class clInterface extends Component {
 
         if (vCheckResult === true) {
           //Declare Winner
-          vStateNew.scoreBoard.winner = vTurn;
+          this.newState.scoreBoard.winner = vTurn;
 
           //Increment Score
           if (vTurn === GLSYMBOL_X) {
-            vStateNew.scoreBoard.xScore = vStateNew.scoreBoard.xScore + 1;
+            this.newState.scoreBoard.xScore =
+              this.newState.scoreBoard.xScore + 1;
           } else {
-            vStateNew.scoreBoard.oScore = vStateNew.scoreBoard.oScore + 1;
+            this.newState.scoreBoard.oScore =
+              this.newState.scoreBoard.oScore + 1;
           }
-          
+
           break;
         } else {
           //No Winner
-          vStateNew.scoreBoard.winner = GLSYMBOL_DEF;
+          this.newState.scoreBoard.winner = GLSYMBOL_DEF;
         }
       }
-      resolve(vStateNew.scoreBoard);
+      resolve(0);
     });
   }
 
-  changeTurn(aStateNew) {
+  changeTurn() {
     return new Promise((resolve, reject) => {
-      let vTurn = aStateNew.tictacBoard.turn;
+      let vTurn = this.newState.tictacBoard.turn;
       switch (vTurn) {
         case GLSYMBOL_X:
-          aStateNew.tictacBoard.turn = GLSYMBOL_O;
+          this.newState.tictacBoard.turn = GLSYMBOL_O;
           break;
         case GLSYMBOL_O:
-          aStateNew.tictacBoard.turn = GLSYMBOL_X;
+          this.newState.tictacBoard.turn = GLSYMBOL_X;
           break;
         default:
-          aStateNew.tictacBoard.turn = GLSYMBOL_DEF;
+          this.newState.tictacBoard.turn = GLSYMBOL_DEF;
           break;
       }
 
-      aStateNew.tictacBoard.turnCnt = aStateNew.tictacBoard.turnCnt + 1;
-      resolve(aStateNew.tictacBoard);
+      this.newState.tictacBoard.turnCnt = this.newState.tictacBoard.turnCnt + 1;
+      resolve(0);
+    });
+  }
+
+  playerMove(aPanelNum) {
+    return new Promise(async (resolve, reject) => {
+      //Get current values
+      this.newState = JSON.parse(JSON.stringify(this.state));
+      let vPanel = this.state.tictacBoard.panels;
+
+      if (vPanel[aPanelNum] === GLSYMBOL_DEF) {
+        await this.placeMove(aPanelNum); //Place Move
+        await this.checkWinner(); //Check Winner
+        let vWinner = this.newState.scoreBoard.winner;
+
+        if (vWinner === GLSYMBOL_DEF) {
+          await this.changeTurn();
+          let vTurnCnt = this.newState.tictacBoard.turnCnt;
+          if (vTurnCnt < 9) {
+            
+          } else {
+            this.newState.tictacBoard.resetButton = false
+            alert("Draw Match!");
+          }
+
+        } else {
+          this.newState.tictacBoard.resetButton = false
+          alert("Won Match!");
+        }
+
+      } else {
+        alert("Already accupied!");
+      }
+
+      resolve(0);
     });
   }
 
   async updatePanelVal(aPanelNum) {
-    let vStateNew = await this.placeMove(aPanelNum);
+    await this.playerMove(aPanelNum);
 
     this.setState(
       {
-        tictacBoard: vStateNew.tictacBoard,
-        scoreBoard: vStateNew.scoreBoard,
+        tictacBoard: this.newState.tictacBoard,
+        scoreBoard: this.newState.scoreBoard,
       },
       () => {
         console.log(this.state);
@@ -235,7 +247,12 @@ class clInterface extends Component {
           <tbody>
             <tr>
               <td colSpan={3}>
-                <input type="button" value={"Reset"} onClick={this.handleClickResetGame} disabled={this.state.tictacBoard.resetButton}></input>
+                <input
+                  type="button"
+                  value={"Reset"}
+                  onClick={this.handleClickResetGame}
+                  disabled={this.state.tictacBoard.resetButton}
+                ></input>
               </td>
             </tr>
           </tbody>

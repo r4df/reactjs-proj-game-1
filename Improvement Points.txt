@@ -1,0 +1,2 @@
+1. Highlight winning pattern
+2. Game cap (Best of 7)
