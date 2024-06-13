@@ -5,6 +5,13 @@ const GLSYMBOL_DEF = "-";
 const GLSYMBOL_X = "X";
 const GLSYMBOL_O = "O";
 
+const GLPANELCOLOR_N = "#566573";
+const GLPANELCOLOR_S = "#5DADE2"; //Selected
+const GLPANELCOLOR_W = "#58D68D"; //Won
+
+const GLMATCHSTS_END = 0;
+const GLMATCHSTS_INPROGRESS = 1;
+
 //Operation
 class clInterface extends Component {
   constructor(props) {
@@ -12,9 +19,12 @@ class clInterface extends Component {
     this.state = {
       tictacBoard: {
         panels: Array(9).fill(GLSYMBOL_DEF),
+        panelsBgColor: Array(9).fill(GLPANELCOLOR_N),
+        panelsStyle: Array(9).fill(""),
         turn: GLSYMBOL_X,
         turnCnt: 0,
         resetButton: true,
+        matchStatus: GLMATCHSTS_INPROGRESS,
       },
       scoreBoard: {
         winner: GLSYMBOL_DEF,
@@ -58,9 +68,12 @@ class clInterface extends Component {
       let vStateNew = JSON.parse(JSON.stringify(this.state));
 
       vStateNew.tictacBoard.panels = Array(9).fill(GLSYMBOL_DEF);
+      vStateNew.tictacBoard.panelsBgColor = Array(9).fill(GLPANELCOLOR_N);
+      vStateNew.tictacBoard.panelsStyle = Array(9).fill("");
       vStateNew.tictacBoard.turn = GLSYMBOL_X;
       vStateNew.tictacBoard.turnCnt = 0;
       vStateNew.tictacBoard.resetButton = true;
+      vStateNew.tictacBoard.matchStatus = GLMATCHSTS_INPROGRESS;
 
       vStateNew.scoreBoard.winner = GLSYMBOL_DEF;
 
@@ -91,6 +104,8 @@ class clInterface extends Component {
         default:
           break;
       }
+
+      this.newState.tictacBoard.panelsBgColor[aPanelNum] = GLPANELCOLOR_S;
       resolve(0);
     });
   }
@@ -120,6 +135,16 @@ class clInterface extends Component {
           } else {
             this.newState.scoreBoard.oScore =
               this.newState.scoreBoard.oScore + 1;
+          }
+
+          //
+          for (let vInd = 0; vInd < 9; vInd++) {
+            this.newState.tictacBoard.panelsBgColor[vInd] = GLPANELCOLOR_N;
+          }
+          //BG Color
+          for (let vInd = 0; vInd < 3; vInd++) {
+            this.newState.tictacBoard.panelsBgColor[vEachPattern[vInd]] =GLPANELCOLOR_W;
+            this.newState.tictacBoard.panelsStyle[vEachPattern[vInd]] = "panelBlink";
           }
 
           break;
@@ -158,28 +183,31 @@ class clInterface extends Component {
       this.newState = JSON.parse(JSON.stringify(this.state));
       let vPanel = this.state.tictacBoard.panels;
 
-      if (vPanel[aPanelNum] === GLSYMBOL_DEF) {
-        await this.placeMove(aPanelNum); //Place Move
-        await this.checkWinner(); //Check Winner
-        let vWinner = this.newState.scoreBoard.winner;
+      if (this.newState.tictacBoard.matchStatus === GLMATCHSTS_INPROGRESS) {
+        if (vPanel[aPanelNum] === GLSYMBOL_DEF) {
+          await this.placeMove(aPanelNum); //Place Move
+          await this.checkWinner(); //Check Winner
+          let vWinner = this.newState.scoreBoard.winner;
 
-        if (vWinner === GLSYMBOL_DEF) {
-          await this.changeTurn();
-          let vTurnCnt = this.newState.tictacBoard.turnCnt;
-          if (vTurnCnt < 9) {
-            
+          if (vWinner === GLSYMBOL_DEF) {
+            await this.changeTurn();
+            let vTurnCnt = this.newState.tictacBoard.turnCnt;
+            if (vTurnCnt < 9) {
+            } else {
+              this.newState.tictacBoard.resetButton = false;
+              this.newState.tictacBoard.matchStatus = GLMATCHSTS_END;
+              alert("Draw Match!");
+            }
           } else {
-            this.newState.tictacBoard.resetButton = false
-            alert("Draw Match!");
+            this.newState.tictacBoard.resetButton = false;
+            this.newState.tictacBoard.matchStatus = GLMATCHSTS_END;
+            alert("Won Match!");
           }
-
         } else {
-          this.newState.tictacBoard.resetButton = false
-          alert("Won Match!");
+          alert("Already accupied!");
         }
-
       } else {
-        alert("Already accupied!");
+        alert("Match completed, click 'Reset' to proceed to next match.");
       }
 
       resolve(0);
@@ -203,81 +231,137 @@ class clInterface extends Component {
   render() {
     return (
       <div id="tictactoe">
-        <table id="tbl-tictac">
-          <thead>
-            <tr>
-              <th colSpan={3}>TIC TAC TOE</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td onClick={this.handleClick[0]}>
-                {this.state.tictacBoard.panels[0]}
-              </td>
-              <td onClick={this.handleClick[1]}>
-                {this.state.tictacBoard.panels[1]}
-              </td>
-              <td onClick={this.handleClick[2]}>
-                {this.state.tictacBoard.panels[2]}
-              </td>
-            </tr>
-            <tr>
-              <td onClick={this.handleClick[3]}>
-                {this.state.tictacBoard.panels[3]}
-              </td>
-              <td onClick={this.handleClick[4]}>
-                {this.state.tictacBoard.panels[4]}
-              </td>
-              <td onClick={this.handleClick[5]}>
-                {this.state.tictacBoard.panels[5]}
-              </td>
-            </tr>
-            <tr>
-              <td onClick={this.handleClick[6]}>
-                {this.state.tictacBoard.panels[6]}
-              </td>
-              <td onClick={this.handleClick[7]}>
-                {this.state.tictacBoard.panels[7]}
-              </td>
-              <td onClick={this.handleClick[8]}>
-                {this.state.tictacBoard.panels[8]}
-              </td>
-            </tr>
-          </tbody>
-          <tbody>
-            <tr>
-              <td colSpan={3}>
-                <input
-                  type="button"
-                  value={"Reset"}
-                  onClick={this.handleClickResetGame}
-                  disabled={this.state.tictacBoard.resetButton}
-                ></input>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div id="tictactoe-mod-1">
+          <table id="tbl-tictac">
+            <thead>
+              <tr>
+                <th colSpan={3}>TIC TAC TOE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td
+                  className={this.state.tictacBoard.panelsStyle[0]}
+                  onClick={this.handleClick[0]}
+                  style={{
+                    backgroundColor: this.state.tictacBoard.panelsBgColor[0],
+                  }}
+                >
+                  {this.state.tictacBoard.panels[0]}
+                </td>
+                <td
+                  className={this.state.tictacBoard.panelsStyle[1]}
+                  onClick={this.handleClick[1]}
+                  style={{
+                    backgroundColor: this.state.tictacBoard.panelsBgColor[1],
+                  }}
+                >
+                  {this.state.tictacBoard.panels[1]}
+                </td>
+                <td
+                  className={this.state.tictacBoard.panelsStyle[2]}
+                  onClick={this.handleClick[2]}
+                  style={{
+                    backgroundColor: this.state.tictacBoard.panelsBgColor[2],
+                  }}
+                >
+                  {this.state.tictacBoard.panels[2]}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  className={this.state.tictacBoard.panelsStyle[3]}
+                  onClick={this.handleClick[3]}
+                  style={{
+                    backgroundColor: this.state.tictacBoard.panelsBgColor[3],
+                  }}
+                >
+                  {this.state.tictacBoard.panels[3]}
+                </td>
+                <td
+                  className={this.state.tictacBoard.panelsStyle[4]}
+                  onClick={this.handleClick[4]}
+                  style={{
+                    backgroundColor: this.state.tictacBoard.panelsBgColor[4],
+                  }}
+                >
+                  {this.state.tictacBoard.panels[4]}
+                </td>
+                <td
+                  className={this.state.tictacBoard.panelsStyle[5]}
+                  onClick={this.handleClick[5]}
+                  style={{
+                    backgroundColor: this.state.tictacBoard.panelsBgColor[5],
+                  }}
+                >
+                  {this.state.tictacBoard.panels[5]}
+                </td>
+              </tr>
+              <tr>
+                <td
+                  className={this.state.tictacBoard.panelsStyle[6]}
+                  onClick={this.handleClick[6]}
+                  style={{
+                    backgroundColor: this.state.tictacBoard.panelsBgColor[6],
+                  }}
+                >
+                  {this.state.tictacBoard.panels[6]}
+                </td>
+                <td
+                  className={this.state.tictacBoard.panelsStyle[7]}
+                  onClick={this.handleClick[7]}
+                  style={{
+                    backgroundColor: this.state.tictacBoard.panelsBgColor[7],
+                  }}
+                >
+                  {this.state.tictacBoard.panels[7]}
+                </td>
+                <td
+                  className={this.state.tictacBoard.panelsStyle[8]}
+                  onClick={this.handleClick[8]}
+                  style={{
+                    backgroundColor: this.state.tictacBoard.panelsBgColor[8],
+                  }}
+                >
+                  {this.state.tictacBoard.panels[8]}
+                </td>
+              </tr>
+            </tbody>
+            <tbody>
+              <tr>
+                <td colSpan={3}>
+                  <input
+                    type="button"
+                    value={"Reset"}
+                    onClick={this.handleClickResetGame}
+                    disabled={this.state.tictacBoard.resetButton}
+                  ></input>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-        <table id="tbl-scoreboard">
-          <thead>
-            <tr>
-              <th colSpan={2}>Score Board</th>
-            </tr>
-            <tr>
-              <td colSpan={2}>Winner : {this.state.scoreBoard.winner}</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>X's</td>
-              <td>{this.state.scoreBoard.xScore}</td>
-            </tr>
-            <tr>
-              <td>O's</td>
-              <td>{this.state.scoreBoard.oScore}</td>
-            </tr>
-          </tbody>
-        </table>
+          <table id="tbl-scoreboard">
+            <thead>
+              <tr>
+                <th colSpan={2}>Score Board</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colSpan={2}>Winner : {this.state.scoreBoard.winner}</td>
+              </tr>
+              <tr>
+                <td>X's</td>
+                <td>{this.state.scoreBoard.xScore}</td>
+              </tr>
+              <tr>
+                <td>O's</td>
+                <td>{this.state.scoreBoard.oScore}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
