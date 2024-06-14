@@ -2,16 +2,17 @@ import logo from "./logo.svg";
 import "./App.css";
 
 //Component
-import Interface from "./component/Interface.js";
+import Tictactoe from "./component/zgames/tictactoe.js";
+import Pokedex from "./components/ztools/pokedex.js"
 import React from "react";
-//import { useState } from "react";
 
 function App() {
   
   return (
     <div className="App">
       <div>
-          <Interface></Interface>
+          <Tictactoe></Tictactoe>
+          <Pokedex></Pokedex>
       </div>
     </div>
   );

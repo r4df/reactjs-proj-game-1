@@ -14,6 +14,7 @@ const GLMATCHSTS_INPROGRESS = 1;
 
 //Operation
 class clInterface extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -91,7 +92,7 @@ class clInterface extends Component {
     });
   }
 
-  placeMove(aPanelNum) {
+  #playerMove_placeMove(aPanelNum) {
     return new Promise((resolve, reject) => {
       let vTurn = this.state.tictacBoard.turn;
       switch (vTurn) {
@@ -110,7 +111,7 @@ class clInterface extends Component {
     });
   }
 
-  checkWinner() {
+  #playerMove_checkWinner() {
     return new Promise((resolve, reject) => {
       let vPanels = this.newState.tictacBoard.panels;
       let vTurn = this.newState.tictacBoard.turn;
@@ -157,7 +158,7 @@ class clInterface extends Component {
     });
   }
 
-  changeTurn() {
+  #playerMove_changeTurn() {
     return new Promise((resolve, reject) => {
       let vTurn = this.newState.tictacBoard.turn;
       switch (vTurn) {
@@ -185,12 +186,12 @@ class clInterface extends Component {
 
       if (this.newState.tictacBoard.matchStatus === GLMATCHSTS_INPROGRESS) {
         if (vPanel[aPanelNum] === GLSYMBOL_DEF) {
-          await this.placeMove(aPanelNum); //Place Move
-          await this.checkWinner(); //Check Winner
+          await this.#playerMove_placeMove(aPanelNum); //Place Move
+          await this.#playerMove_checkWinner(); //Check Winner
           let vWinner = this.newState.scoreBoard.winner;
 
           if (vWinner === GLSYMBOL_DEF) {
-            await this.changeTurn();
+            await this.#playerMove_changeTurn();
             let vTurnCnt = this.newState.tictacBoard.turnCnt;
             if (vTurnCnt < 9) {
             } else {
