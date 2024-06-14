@@ -39,8 +39,8 @@
 
 /*User*/
 @font-face {
-  font-family: 'zx-spectrum';
-  src: URL('/src/font/zx_spectrum/zx-spectrum.ttf') format('truetype');
+  font-family: "zx-spectrum";
+  src: URL("/src/font/zx_spectrum/zx-spectrum.ttf") format("truetype");
 }
 
 .panelBlink {
@@ -53,9 +53,9 @@
   }
 }
 
-*{
+* {
   /* font-family: Copperplate, Arial, fantasy; */
-  font-family: 'zx-spectrum', sans-serif;
+  font-family: "zx-spectrum", sans-serif;
   color: #07393c;
 }
 
@@ -66,13 +66,13 @@
   align-items: flex-start;
 }
 
-#tictactoe-mod-1{
+#tictactoe-mod-1 {
   display: flex;
   border: 1px solid #0a090c;
   border-radius: 5px;
   margin: 10px;
   padding: 5px;
-  background-color: #F0EDEE;
+  background-color: #f0edee;
   box-shadow: 10px 5px 5px rgba(0, 0, 0, 0.469);
 }
 
@@ -84,12 +84,11 @@
 }
 
 #tbl-tictac > thead,
-#tbl-scoreboard > thead{
-  background:#2c666e;
-
+#tbl-scoreboard > thead {
+  background: #2c666e;
 }
 
-*th{
+*th {
   color: #f0edee !important;
 }
 
@@ -101,4 +100,81 @@
   padding: 5px;
   height: 25px;
   width: 25px;
+}
+
+/*zt-pd*/
+#zt-pd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#zt-pd-mod {
+  width: 500px;
+  background-color: #eaf2f8;
+  border: 1px solid #07393c;
+  padding: 5px;
+  margin: 5px;
+  border-radius: 5px;
+}
+
+#zt-pd-header {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+
+}
+
+#zt-pd-main {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 5px;
+  margin: 5px;
+  border: 1px solid #07393c;
+  border-radius: 5px;
+
+}
+
+#zt-pd-left-panel,
+#zt-pd-right-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  background: #eaecee;
+  border: 1px solid #07393c;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+#zt-pd-left-panel > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  /* Border */
+  border: 1px solid black;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+#zt-pd-right-panel > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  /* Border */
+  border: 1px solid black;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+#zt-pd-right-panel div > p {
+  margin: 0px;
 }

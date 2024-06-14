@@ -3,7 +3,7 @@ import "./App.css";
 
 //Component
 import Tictactoe from "./component/zgames/tictactoe.js";
-import Pokedex from "./components/ztools/pokedex.js"
+import Pokedex from "./component/ztools/pokedex.js"
 import React from "react";
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
   return (
     <div className="App">
       <div>
-          <Tictactoe></Tictactoe>
+          {/* <Tictactoe></Tictactoe> */}
           <Pokedex></Pokedex>
       </div>
     </div>
