@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="App">
       <div>
-          <Interface></Interface>
+          <Pokedex></Pokedex>
       </div>
     </div>
   );
