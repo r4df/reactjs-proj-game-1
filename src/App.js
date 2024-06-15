@@ -1,5 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
+import "./component/ztools/pokedex.css";
 
 //Component
 import Tictactoe from "./component/zgames/tictactoe.js";

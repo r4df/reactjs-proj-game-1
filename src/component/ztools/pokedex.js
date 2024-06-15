@@ -1,42 +1,45 @@
 import React, { Component } from "react";
 
+const GLPOKEAPIURL = "https://pokeapi.co/api/v2/pokemon/";
+
 export default class clPokeDex extends Component {
   constructor() {
     super();
     this.handlerGetUrlData = this.getUrlData.bind(this);
     this.state = {
-      data:{
-        name:"-",
-        height:0.0,
-        weight:0.0,
-        sprites:{
-          front_default:""
-        }
+      data: {
+        name: "-",
+        height: 0.0,
+        weight: 0.0,
+        sprites: {
+          front_default: "",
+        },
+        types: [],
+        id:"-",
       },
-      searchValue :"pikachu"
-    }
+      searchValue: "pikachu",
+    };
   }
 
   getUrlData() {
-    fetch(`https://pokeapi.co/api/v2/pokemon/${this.state.searchValue}`)
+    fetch(GLPOKEAPIURL + `${this.state.searchValue}`)
       .then((response) => {
         return response.json();
       })
       .then((jsonData) => {
-        console.log(jsonData)
-        console.log(jsonData.sprites.front_default)
+        console.log(jsonData);
+        console.log(jsonData.sprites.front_default);
         this.setState({
-          data: jsonData
-        })
+          data: jsonData,
+        });
       });
   }
 
   handleInputSearch = (event) => {
     this.setState({
-      searchValue: event.target.value
-    })
-  }
-
+      searchValue: event.target.value,
+    });
+  };
 
   render() {
     return (
@@ -59,6 +62,18 @@ export default class clPokeDex extends Component {
               <div>
                 <img src={this.state.data.sprites.front_default}></img>
               </div>
+              <div>
+                <p>No.: {this.state.data.id}</p>
+                <p>Types:</p>
+                <div>
+                  {this.state.data.types.map((item, index) => (
+                    <a href={item.type.url} className={`zt-pd-type zt-pd-type-${item.type.name}`}>
+                      {item.type.name}
+                    </a>
+                  ))}
+                </div>
+
+              </div>
             </div>
 
             <div id="zt-pd-right-panel">
@@ -67,9 +82,8 @@ export default class clPokeDex extends Component {
                 <p>{this.state.data.name.toUpperCase()}</p>
               </div>
               <div>
-                <p>Characteristic:</p>
-                <p>Height: {Number(this.state.data.height)/10}m</p>
-                <p>Weight: {Number(this.state.data.weight)/10}kg</p>
+                <p>Ht: {Number(this.state.data.height) / 10}m</p>
+                <p>Wt: {Number(this.state.data.weight) / 10}kg</p>
               </div>
             </div>
           </div>
