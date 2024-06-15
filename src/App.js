@@ -1,18 +1,18 @@
 import logo from "./logo.svg";
 import "./App.css";
+import "./component/ztools/pokedex.css";
 
 //Component
-import Interface from "./component/Interface.js";
+import Tictactoe from "./component/zgames/tictactoe.js";
+import Pokedex from "./component/ztools/pokedex.js"
 import React from "react";
-//import { useState } from "react";
 
 function App() {
   
   return (
     <div className="App">
       <div>
-          <h1>TEST</h1>
-          <Interface></Interface>
+          <Pokedex></Pokedex>
       </div>
     </div>
   );

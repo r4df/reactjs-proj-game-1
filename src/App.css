@@ -39,8 +39,8 @@
 
 /*User*/
 @font-face {
-  font-family: 'zx-spectrum';
-  src: URL('/src/font/zx_spectrum/zx-spectrum.ttf') format('truetype');
+  font-family: "zx-spectrum";
+  src: URL("/src/font/zx_spectrum/zx-spectrum.ttf") format("truetype");
 }
 
 .panelBlink {
@@ -53,9 +53,9 @@
   }
 }
 
-*{
+* {
   /* font-family: Copperplate, Arial, fantasy; */
-  font-family: 'zx-spectrum', sans-serif;
+  font-family: "zx-spectrum", sans-serif;
   color: #07393c;
 }
 
@@ -66,13 +66,13 @@
   align-items: flex-start;
 }
 
-#tictactoe-mod-1{
+#tictactoe-mod-1 {
   display: flex;
   border: 1px solid #0a090c;
   border-radius: 5px;
   margin: 10px;
   padding: 5px;
-  background-color: #F0EDEE;
+  background-color: #f0edee;
   box-shadow: 10px 5px 5px rgba(0, 0, 0, 0.469);
 }
 
@@ -84,12 +84,11 @@
 }
 
 #tbl-tictac > thead,
-#tbl-scoreboard > thead{
-  background:#2c666e;
-
+#tbl-scoreboard > thead {
+  background: #2c666e;
 }
 
-*th{
+*th {
   color: #f0edee !important;
 }
 
